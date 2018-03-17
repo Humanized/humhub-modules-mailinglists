@@ -1,0 +1,14 @@
+{
+    "id": "mailing_lists",
+    "name": "Mailing lists",
+    "description": "Mailing-lists with custom-page module integration.",
+    "keywords": ["humhub", "space", "post"],
+    "version": "1.0",
+    "humhub": {
+        "minVersion": "1.2.0"
+    },
+    "require": {
+        "custom_pages": ">=0.8.2"
+    }
+}
+
