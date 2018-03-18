@@ -1,11 +1,11 @@
 <?php
 
-namespace humhub\modules\mailing_lists\models;
+namespace humhub\modules\mailinglists\models;
 
 use Yii;
 use yii\base\Model;
-use humhub\modules\mailing_lists\components\SubscriptionValidator;
-use humhub\modules\mailing_lists\models\Membership;
+use humhub\modules\mailinglists\components\SubscriptionValidator;
+use humhub\modules\mailinglists\models\Membership;
 use humhub\modules\user\models\User;
 
 /**

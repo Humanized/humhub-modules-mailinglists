@@ -1,6 +1,6 @@
 <?php
 
-namespace humhub\modules\mailing_lists\models;
+namespace humhub\modules\mailinglists\models;
 
 use Yii;
 use yii\db\ActiveRecord;

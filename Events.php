@@ -1,13 +1,13 @@
 <?php
 
-namespace humhub\modules\mailing_lists;
+namespace humhub\modules\mailinglist;
 
 use Yii;
 
 use humhub\modules\user\models\User;
 use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
 
-use humhub\modules\mailing_lists\models\MailingListEntry;
+use humhub\modules\mailinglist\models\MailingListEntry;
 
 
 /**

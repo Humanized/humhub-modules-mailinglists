@@ -1,9 +1,9 @@
 <?php
 
-namespace humhub\modules\mailing_lists\controllers;
+namespace humhub\modules\mailinglists\controllers;
 
-use humhub\modules\mailing_lists\models\SubscribeForm;
-use humhub\modules\mailing_lists\models\Membership;
+use humhub\modules\mailinglists\models\SubscribeForm;
+use humhub\modules\mailinglists\models\Membership;
 use Yii;
 
 /**

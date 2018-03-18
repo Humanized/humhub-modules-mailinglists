@@ -1,6 +1,6 @@
 <?php
 
-namespace humhub\modules\mailing_lists\components;
+namespace humhub\modules\mailinglists\components;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -9,7 +9,7 @@ namespace humhub\modules\mailing_lists\components;
  */
 
 use yii\validators\Validator;
-use humhub\modules\mailing_lists\models\Membership;
+use humhub\modules\mailinglists\models\Membership;
 
 /**
  * Description of SubscriptionValidator

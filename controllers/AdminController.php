@@ -1,14 +1,14 @@
 <?php
 
-namespace humhub\modules\mailing_lists\controllers;
+namespace humhub\modules\mailinglists\controllers;
 
 use Yii;
 use humhub\modules\admin\components\Controller;
 
 use humhub\modules\custom_pages\modules\template\components\TemplateCache;
 
-use humhub\modules\mailing_lists\models\MailingListEntry;
-use humhub\modules\mailing_lists\models\Membership;
+use humhub\modules\mailinglists\models\MailingListEntry;
+use humhub\modules\mailinglists\models\Membership;
 
 
 /**
@@ -40,7 +40,7 @@ class AdminController extends Controller
      */
     public function actionEntries()
     {
-        return $this->render('@mailing_lists/views/admin/list', [
+        return $this->render('@mailinglists/views/admin/list', [
             'entries' => MailingListEntry::find()->all(),
         ]);
     }
@@ -65,7 +65,7 @@ class AdminController extends Controller
 
         $members = Membership::find()->all();
         foreach($members as $member) {
-            $url = Url::to(['mailing_lists/member/unsubscribe'], [
+            $url = Url::to(['mailinglists/member/unsubscribe'], [
                 'token' => $token
             ]);
             $body =
@@ -83,7 +83,7 @@ class AdminController extends Controller
         $entry->is_sent = true;
         $entry->save();
 
-        return $this->render('@mailing_lists/views/admin/list', [
+        return $this->render('@mailinglists/views/admin/list', [
             'entries' => MailingListEntry::find()->all(),
             'message' => 'Mails have been successfully sent!'
         ]);
