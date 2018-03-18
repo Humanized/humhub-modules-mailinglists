@@ -2,7 +2,6 @@
 
 namespace humhub\modules\mailing_lists\controllers;
 
-use humhub\modules\admin\components\Controller;
 use humhub\modules\mailing_lists\models\SubscribeForm;
 use humhub\modules\mailing_lists\models\Membership;
 use Yii;
@@ -18,17 +17,22 @@ class MemberController extends \humhub\modules\content\controllers\ContentContro
         $model = new SubscribeForm;
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->save();
+            if ($model->save()) {
+                $this->view->success('Newsletter subscription successful!');
+            } else {
+                $this->view->error('Already subscribed to newsletter!');
+            }
         }
-        return;
+        return $this->redirect(Yii::$app->homeUrl);
     }
 
     function actionUnsubscribe($token)
     {
         $model = Membership::findOne(['token' => $token]);
-        if (isset($model)) {
-            $model->delete();
+        if (isset($model) && $model->delete()) {
+            $this->view->success('Newsletter unsubscription successful!');
         }
+        return $this->redirect(Yii::$app->homeUrl);
     }
 
 }

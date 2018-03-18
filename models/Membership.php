@@ -14,7 +14,7 @@ use yii\db\ActiveRecord;
 class Membership extends ActiveRecord
 {
 
-    public function tableName()
+    public static function tableName()
     {
         return 'mailing_list_membership';
     }
