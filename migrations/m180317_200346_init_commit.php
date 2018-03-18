@@ -11,7 +11,7 @@ class m180317_200346_init_commit extends Migration
     {
         $this->createTable('mailing_list_membership', [
             'id' => $this->primaryKey(),
-            'email' => $this->string(128)->notNull(),
+            'email' => $this->string(128)->notNull()->unique(),
             'is_member' => $this->boolean(),
             'token' => $this->string(128),
                 ], $this->tableOptions);
@@ -33,19 +33,4 @@ class m180317_200346_init_commit extends Migration
 
         return false;
     }
-
-    /*
-      // Use up()/down() to run migration code without a transaction.
-      public function up()
-      {
-
-      }
-
-      public function down()
-      {
-      echo "m180317_200346_init_commit cannot be reverted.\n";
-
-      return false;
-      }
-     */
 }
