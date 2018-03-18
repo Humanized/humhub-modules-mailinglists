@@ -21,8 +21,8 @@ use humhub\modules\user\models\User;
  * This is the model class for table "mailing_list_entry".
  *
  * @property integer $id
- * @property integer $template_instance
- * @property bool $sent
+ * @property integer $template_instance_id
+ * @property bool $is_sent
  */
 class MailingListEntry extends ActiveRecord
 {

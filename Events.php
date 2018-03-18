@@ -40,7 +40,7 @@ class Events extends \yii\base\Object
 
         $entry = new MailingListEntry();
         $entry->template_instance_id = $instance->id;
-        $entry->sent = false;
+        $entry->is_sent = false;
         $entry->save();
     }
 }

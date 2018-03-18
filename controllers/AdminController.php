@@ -5,7 +5,7 @@ namespace humhub\modules\mailing_lists\controllers;
 use Yii;
 use humhub\modules\admin\components\Controller;
 
-use humhub\modules\custom_pages\modules\template\widgets\TemplatePage;
+use humhub\modules\custom_pages\modules\template\components\TemplateCache;
 
 use humhub\modules\mailing_lists\models\MailingListEntry;
 use humhub\modules\mailing_lists\models\Membership;
@@ -61,17 +61,44 @@ class AdminController extends Controller
             return "";
 
         $page = $entry->page;
-        $content = TemplatePage::widget(['page' => $page, 'canEdit' => false, 'editMode' => false ]);
-        return $page->title . "\n<br>" . $content;
+        $content = $this->renderPage($entry);
 
-        $members = Membership::findAll()->all();
+        $members = Membership::find()->all();
         foreach($members as $member) {
+            $url = Url::to(['mailing_lists/member/unsubscribe'], [
+                'token' => $token
+            ]);
+            $body =
+                $content . '<br><small>' .
+                'Unsubscribe to this mailing-list: <a href="'.$url.'">'.$url.'</a>' .
+                '</small>';
+
             Yii::$app->mailer->compose()
                 ->setTo($member->email)
                 ->setSubject($page->title)
                 ->setHtmlBody($page->entry)
                 ;
         }
+
+        $entry->is_sent = true;
+        $entry->save();
+
+        return $this->render('@mailing_lists/views/admin/list', [
+            'entries' => MailingListEntry::find()->all(),
+            'message' => 'Mails have been successfully sent!'
+        ]);
+    }
+
+    function renderPage($entry)
+    {
+        \humhub\modules\custom_pages\Module::loadTwig();
+        $instance = $entry->instance;
+        if(TemplateCache::exists($instance))
+            return TemplateCache::get($instance);
+
+        $html = $instance->render(false);
+        TemplateCache::set($instance, $html);
+        return $html;
     }
 }
 
