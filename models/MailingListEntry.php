@@ -5,7 +5,7 @@ namespace humhub\modules\mailing_lists\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-use humhub\modules\custom_pages\models\Page;
+use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
 
 /*
 use yii\helpers\ArrayHelper;
@@ -28,7 +28,15 @@ class MailingListEntry extends ActiveRecord
 {
     public function getInstance()
     {
-        return $this->hasOne(Page::className(), ['id' => 'template_instance_id']);
+        return $this->hasOne(TemplateInstance::className(),
+                             ['id' => 'template_instance_id'])->one();
+    }
+
+    public function getPage()
+    {
+        $instance = $this->getInstance();
+        if($instance)
+            return $instance->getPolymorphicRelation();
     }
 
 
