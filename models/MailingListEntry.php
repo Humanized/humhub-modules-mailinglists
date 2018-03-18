@@ -5,6 +5,7 @@ namespace humhub\modules\mailinglists\models;
 use Yii;
 use yii\db\ActiveRecord;
 
+use humhub\modules\custom_pages\modules\template\models\Template;
 use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
 
 /*
@@ -37,6 +38,15 @@ class MailingListEntry extends ActiveRecord
         $instance = $this->getInstance();
         if($instance)
             return $instance->getPolymorphicRelation();
+    }
+
+    /**
+     *  Return the id of the user selected template
+     */
+    public static function getTemplateId()
+    {
+        return Yii::$app->getModule('mailinglists')->settings
+                    ->get('globalTemplateId',0);
     }
 
 
