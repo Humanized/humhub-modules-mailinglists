@@ -1,6 +1,6 @@
 <?php
 
-namespace humhub\modules\mailinglist;
+namespace humhub\modules\mailinglists;
 
 use yii\base\Event;
 use yii\helpers\Url;
@@ -9,7 +9,7 @@ use humhub\modules\content\components\ContentContainerModule;
 use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
 
 
-use humhub\modules\mailinglist\Events;
+use humhub\modules\mailinglists\Events;
 
 class Module extends ContentContainerModule
 {
@@ -29,7 +29,7 @@ class Module extends ContentContainerModule
      */
     public function getConfigUrl()
     {
-        return Url::to(['/mailinglist/admin']);
+        return Url::to(['/mailinglists/admin']);
     }
 }
 

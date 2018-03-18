@@ -3,16 +3,16 @@
 use yii\db\ActiveRecord;
 
 return [
-    'id' => 'mailinglist',
-    'class' => 'humhub\modules\mailinglist\Module',
-    'namespace' => 'humhub\modules\mailinglist',
+    'id' => 'mailinglists',
+    'class' => 'humhub\modules\mailinglists\Module',
+    'namespace' => 'humhub\modules\mailinglists',
 
     'events' => [
         [
             'class' => ActiveRecord::className(),
             'event' => ActiveRecord::EVENT_AFTER_UPDATE,
             'callback' => [
-                  'humhub\modules\mailinglist\Events',
+                  'humhub\modules\mailinglists\Events',
                   'onTemplateInstanceInsert'
             ]
         ],

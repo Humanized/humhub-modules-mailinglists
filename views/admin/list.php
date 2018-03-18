@@ -31,19 +31,26 @@ use yii\helpers\Url;
                     echo "background-color:rgba(180, 255, 0, 0.2);";
                 ?>">
                 <td><?= $page->title ?></td>
-                <td><form method="POST" action="<?= Url::to(['admin/send']) ?>">
-                    <input type="hidden" name="entry" value="<?= $entry->id ?>">
-                    <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
-                    <button name="action" value="send">
-                    <?php
-                    if(!$entry->is_sent)
-                        echo 'Send';
-                    else
-                        echo 'Send Again';
-                    ?>
-                </form></td>
-            <strong>
-            </div>
+                <td>
+                    <form style="display:inline-block" method="POST" action="<?= Url::to(['admin/send']) ?>">
+                        <input type="hidden" name="entry" value="<?= $entry->id ?>">
+                        <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
+                        <button name="action" value="send" class="btn btn-xs">
+                            <li class="fa fa-envelope"> <?php
+                                if(!$entry->is_sent)
+                                    echo 'Send';
+                                else
+                                    echo 'Send Again';
+                            ?></li>
+                        </button>
+                    </form>
+                    <?= Html::a(
+                        '<li class="fa fa-pencil">Edit</li>',
+                        ['/custom_pages/view/view', 'id' => $page->id, 'editMode' => 1],
+                        ['class' => 'btn btn-xs btn-primary']
+                    ) ?>
+                </td>
+            </tr>
             <?php
         }
 

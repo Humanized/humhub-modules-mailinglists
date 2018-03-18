@@ -1,5 +1,5 @@
 {
-    "id": "mailinglist",
+    "id": "mailinglists",
     "name": "Humhub Mailing List",
     "description": "Send HTML email to mailing list containing internal or external platform users",
     "keywords": ["humhub", "space", "post"],

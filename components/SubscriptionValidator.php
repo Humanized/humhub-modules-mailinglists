@@ -23,7 +23,7 @@ class SubscriptionValidator extends Validator
     {
         $m = Membership::findOne(['email' => $model->$attribute]);
         if (isset($m)) {
-            $this->addError($model, $attribute, 'Email address already subscribed to mailinglist');
+            $this->addError($model, $attribute, 'Email address already subscribed to mailinglists');
         }
     }
 
