@@ -9,6 +9,7 @@ use humhub\modules\user\models\User;
 use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
 
 use humhub\modules\mailinglists\models\MailingListEntry;
+use humhub\modules\mailinglists\models\Settings;
 
 
 /**
@@ -22,7 +23,7 @@ class Events extends \yii\base\Object
             'label' => 'Mailing Lists',
             'url' => Url::to(['/mailinglists/admin']),
             'group' => 'manage',
-            'icon' => '<i class="fa fa-envelope"></i>',
+            'icon' => '<i class="fa fa-newspaper-o"></i>',
             'isActive' => (
                 Yii::$app->controller->module &&
                 Yii::$app->controller->module->id == 'mailingslist' &&
@@ -46,7 +47,7 @@ class Events extends \yii\base\Object
         ])->one();
 
         // TODO: user settings
-        if($instance->template_id != MailingListEntry::getTemplateId())
+        if($instance->template_id != (new Settings())->globalTemplate)
             return;
 
         $entry = MailingListEntry::find()->where([

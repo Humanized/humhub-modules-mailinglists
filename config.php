@@ -19,6 +19,14 @@ return [
         ],
         [
             'class' => ActiveRecord::className(),
+            'event' => ActiveRecord::EVENT_AFTER_INSERT,
+            'callback' => [
+                  'humhub\modules\mailinglists\Events',
+                  'onTemplateInstanceInsert'
+            ],
+        ],
+        [
+            'class' => ActiveRecord::className(),
             'event' => ActiveRecord::EVENT_AFTER_UPDATE,
             'callback' => [
                   'humhub\modules\mailinglists\Events',

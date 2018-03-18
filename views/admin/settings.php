@@ -1,9 +1,8 @@
 <?php
 
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\bootstrap\ActiveForm;
-
 use humhub\widgets\Button;
 
 use humhub\modules\custom_pages\controllers\ViewController;

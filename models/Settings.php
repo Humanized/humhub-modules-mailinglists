@@ -1,10 +1,4 @@
 <?php
-/**
- * @link https://www.humhub.org/
- * @copyright Copyright (c) 2017 HumHub GmbH & Co. KG
- * @license https://www.humhub.com/licences
- *
- */
 
 namespace humhub\modules\mailinglists\models;
 
@@ -22,15 +16,18 @@ class Settings extends Model
     public $settings;
     public $globalTemplate;
     public $globalSignature;
+    public $globalSignatureMembers;
 
     public $defaultSignature =
-        '<hr><small>unsubscribe shit</small>'
+        '<hr/><p style="font-size: 0.9em">' .
+        'You can unsubscribe from this mailing-list following this link: <a href="{{ member.unsubscribe }}">{{ member.unsubscribe }}</a>' .
+        '</p>'
     ;
 
     /**
      *  Return a list of available templates as [ $id => $name ]
      */
-    public function getTemplates() {
+    static public function getTemplates() {
         return ArrayHelper::map(
             Template::find()->select(['id','name'])->asArray()->all(),
             'id', 'name'

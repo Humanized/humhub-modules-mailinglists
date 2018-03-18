@@ -70,15 +70,14 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                 </td>
                 <td>
                     <div class="pull-right">
-                        <form style="display:inline-block" method="POST" action="<?= Url::to(['admin/send']) ?>">
-                            <input type="hidden" name="entry" value="<?= $entry->id ?>">
-                            <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
-                            <button class="btn btn-xs btn-primary">
-                                <li class="fa fa-envelope">
-                                    Send
-                                </li>
-                            </button>
-                        </form>
+                        <button class="btn btn-xs btn-primary"
+                            data-action-click="ui.modal.load"
+                            data-action-url="<?= Url::toRoute(['admin/send', 'entry' => $entry->id], true)
+                            ?>"
+                        >
+                            <li class="fa fa-envelope"></li>
+                            Send
+                        </button>
                         <?= Html::a(
                             '<li class="fa fa-pencil" title="Edit"></li>',
                             ['/custom_pages/view/view', 'id' => $page->id, 'editMode' => 1],
@@ -90,7 +89,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                             ['class' => 'btn btn-xs btn-primary']
                         ) ?>
                         <?= Html::a(
-                            '<li class="fa fa-trash" title="Delete Page"> Delete</li>',
+                            '<li class="fa fa-trash" title="Delete the Mail"></li>',
                             ['/custom_pages/admin/delete', 'id' => $page->id],
                             ['class' => 'btn btn-xs btn-danger']
                         ) ?>
