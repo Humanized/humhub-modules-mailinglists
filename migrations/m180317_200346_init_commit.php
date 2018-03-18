@@ -11,7 +11,7 @@ class m180317_200346_init_commit extends Migration
     {
         $this->createTable('mailing_list_membership', [
             'id' => $this->primaryKey(),
-            'email' => $this->string(128)->notNull(),
+            'email' => $this->string(128)->notNull()->unique(),
             'is_member' => $this->boolean(),
             'token' => $this->string(128),
                 ], $this->tableOptions);
