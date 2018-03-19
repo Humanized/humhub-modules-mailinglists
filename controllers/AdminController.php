@@ -7,15 +7,16 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 use humhub\modules\admin\components\Controller;
+use humhub\modules\user\models\User;
 use humhub\modules\custom_pages\models\Page;
 use humhub\modules\custom_pages\modules\template\components\TemplateCache;
-use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
 
 use humhub\modules\mailinglists\models\MailingListEntry;
 use humhub\modules\mailinglists\models\Membership;
 use humhub\modules\mailinglists\models\SendSettingsForm;
 use humhub\modules\mailinglists\models\Settings;
 use humhub\modules\mailinglists\widgets\SendSettingsModal;
+// use humhub\modules\mailinglists\widgets\PageEditModal;
 
 
 /**
@@ -23,6 +24,16 @@ use humhub\modules\mailinglists\widgets\SendSettingsModal;
  */
 class AdminController extends Controller
 {
+    /**
+     *  Return true if user has the right on the current ML
+     */
+    public function hasPerms()
+    {
+        $user = Yii::$app->user;
+        return $user->isAdmin();
+    }
+
+
     public function actionIndex()
     {
         return $this->actionEntries();
@@ -33,6 +44,12 @@ class AdminController extends Controller
      */
     public function actionEntries()
     {
+        if(!$this->hasPerms())
+            return "";
+
+        \humhub\modules\custom_pages\modules\template\assets\TemplatePageStyleAsset::register($this->getView());
+        \humhub\modules\custom_pages\modules\template\assets\InlineEditorAsset::register($this->getView());
+
         return $this->render('list', [
             'entries' => MailingListEntry::find()->orderBy('is_sent')->all(),
         ]);
@@ -43,6 +60,9 @@ class AdminController extends Controller
      */
     public function actionSettings()
     {
+        if(!$this->hasPerms())
+            return "";
+
         $model = new Settings();
 
         if($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -59,8 +79,7 @@ class AdminController extends Controller
      */
     public function actionNewPage()
     {
-        $user = Yii::$app->user;
-        if(!$user->isAdmin())
+        if(!$this->hasPerms())
             return "";
 
         $request = Yii::$app->request;
@@ -83,6 +102,23 @@ class AdminController extends Controller
         ]));
     }
 
+    /**
+     *  Page editor into a modal window
+     */
+    /*public function actionPageEditModal()
+    {
+        if(!$this->hasPerms())
+            return "";
+
+        $request = Yii::$app->request;
+        $page = Page::findOne($request->get('page'));
+        if(!$page)
+            return "";
+
+        return PageEditModal::widget([
+            'page' => $page,
+        ]);
+    }*/
 
 
     /**
@@ -109,8 +145,6 @@ class AdminController extends Controller
             $members = array_merge(
                 $members, MemberShip::find()->all()
             );
-
-        $members = array_unique($members);
 
         if($members) {
             $page = $entry->page;
@@ -152,8 +186,7 @@ class AdminController extends Controller
      */
     public function actionSend()
     {
-        $user = Yii::$app->user;
-        if(!$user->isAdmin())
+        if(!$this->hasPerms())
             return "";
 
         $request = Yii::$app->request;
@@ -186,6 +219,9 @@ class AdminController extends Controller
         ];
     }
 
+    /**
+     *  Render a signature and render "template"
+     */
     function renderSignature($signature, $page, $member) {
         foreach($this->signatureMap() as $key => $mapping) {
             $signature = preg_replace(
@@ -197,6 +233,9 @@ class AdminController extends Controller
         return $signature;
     }
 
+    /**
+     *  Render a page
+     */
     function renderPage($entry, $editMode = false)
     {
         \humhub\modules\custom_pages\Module::loadTwig();

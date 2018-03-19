@@ -28,7 +28,6 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
         </div>
         <hr>
 
-
         <div class="clearfix">
             <h5>Create mail</h5>
             <form method="POST" action="<?= Url::to(["admin/new-page"]) ?>"
@@ -78,15 +77,23 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                             <li class="fa fa-envelope"></li>
                             Send
                         </button>
+                        <!-- <button class="btn btn-xs btn-primary"
+                            title="Edit page"
+                            data-action-click="ui.modal.load"
+                            data-action-url="<?= Url::toRoute(['admin/page-edit-modal', 'page' => $page->id], true)
+                            ?>"
+                        >
+                            <li class="fa fa-pencil"></li>
+                        </button> -->
                         <?= Html::a(
                             '<li class="fa fa-pencil" title="Edit"></li>',
                             ['/custom_pages/view/view', 'id' => $page->id, 'editMode' => 1],
-                            ['class' => 'btn btn-xs btn-primary']
+                            ['class' => 'btn btn-xs btn-primary', 'target' => '_blank']
                         ) ?>
                         <?= Html::a(
                             '<li class="fa fa-cogs" title="Page Settings"></li>',
                             ['/custom_pages/admin/edit', 'id' => $page->id],
-                            ['class' => 'btn btn-xs btn-primary']
+                            ['class' => 'btn btn-xs btn-primary', 'target' => '_blank']
                         ) ?>
                         <?= Html::a(
                             '<li class="fa fa-trash" title="Delete the Mail"></li>',

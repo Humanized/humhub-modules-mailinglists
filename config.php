@@ -18,27 +18,27 @@ return [
             ]
         ],
         [
-            'class' => ActiveRecord::className(),
+            'class' => '\humhub\modules\custom_pages\models\Page',
             'event' => ActiveRecord::EVENT_AFTER_INSERT,
             'callback' => [
                   'humhub\modules\mailinglists\Events',
-                  'onTemplateInstanceInsert'
+                  'onPageInsert'
             ],
         ],
         [
-            'class' => ActiveRecord::className(),
+            'class' => '\humhub\modules\custom_pages\models\Page',
             'event' => ActiveRecord::EVENT_AFTER_UPDATE,
             'callback' => [
                   'humhub\modules\mailinglists\Events',
-                  'onTemplateInstanceInsert'
+                  'onPageInsert'
             ],
         ],
         [
-            'class' => ActiveRecord::className(),
+            'class' => '\humhub\modules\custom_pages\models\Page',
             'event' => ActiveRecord::EVENT_BEFORE_DELETE,
             'callback' => [
                   'humhub\modules\mailinglists\Events',
-                  'onTemplateInstanceDelete'
+                  'onPageDelete'
             ],
         ],
     ],

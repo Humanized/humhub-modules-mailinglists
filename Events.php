@@ -34,11 +34,11 @@ class Events extends \yii\base\Object
     }
 
 
-    public static function onTemplateInstanceInsert($event)
+    public static function onPageInsert($event)
     {
+        // FIXME "TemplateInstance" instead of page?
         $instance = $event->sender;
-        // FIXME "TemplateInstance"
-        if(get_class($instance) != "humhub\modules\custom_pages\models\Page")
+        if($instance instanceof Page)
             return;
 
         $instance = TemplateInstance::find()->where([
@@ -46,7 +46,6 @@ class Events extends \yii\base\Object
             'object_model' => 'humhub\modules\custom_pages\models\Page',
         ])->one();
 
-        // TODO: user settings
         if($instance->template_id != (new Settings())->globalTemplate)
             return;
 
@@ -64,7 +63,7 @@ class Events extends \yii\base\Object
     }
 
     // cascading does not seem to work
-    public static function onTemplateInstanceDelete($event)
+    public static function onPageDelete($event)
     {
         $instance = $event->sender;
         if(get_class($instance) != TemplateInstance::className() ||

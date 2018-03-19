@@ -36,7 +36,7 @@ class AdminMenu extends BaseMenu
             'label' => "Mails",
             'url' => Url::to(['/mailinglists/admin']),
             'sortOrder' => 100,
-            'isActive' => AdminMenu::isActive('index') || AdminMenu::isActive('entries')
+            'isActive' => AdminMenu::isActive('index') || AdminMenu::isActive('entries') || AdminMenu::isActive('send')
         ]);
 
         $this->addItem([
