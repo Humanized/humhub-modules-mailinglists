@@ -18,12 +18,19 @@ class m180317_200346_init_commit extends Migration
 
         $this->createTable('mailing_list_entry', [
             'id' => $this->primaryKey(),
-            'template_instance_id' => $this->integer()->notNull(),
+            'page_id' => $this->integer(),
+            'container_page_id' => $this->integer(),
             'is_sent' => $this->boolean()->defaultValue(false)
                 ], $this->tableOptions);
 
         $this->addForeignKey(
-                'fk_mail_template_instance', 'mailing_list_entry', 'template_instance_id', 'template_instance', 'id', 'CASCADE'
+            'fk_mail_template_instance', 'mailing_list_entry', 'page_id',
+            'custom_pages_page', 'id', 'CASCADE'
+        );
+
+        $this->addForeignKey(
+            'fk_mail_template_instance', 'mailing_list_entry', 'container_page_id',
+            'custom_pages_container_page', 'id', 'CASCADE'
         );
     }
 

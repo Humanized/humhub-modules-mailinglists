@@ -5,23 +5,15 @@ namespace humhub\modules\mailinglists;
 use yii\base\Event;
 use yii\helpers\Url;
 use humhub\modules\content\components\ContentContainerModule;
+use humhub\modules\content\components\ContentContainerActiveRecord;
+use humhub\modules\space\models\Space;
 
-use humhub\modules\custom_pages\modules\template\models\TemplateInstance;
-
-
-use humhub\modules\mailinglists\Events;
 
 class Module extends ContentContainerModule
 {
     public function init()
     {
         parent::init();
-
-        Event::on(
-            TemplateInstance::className(),
-            TemplateInstance::EVENT_AFTER_UPDATE,
-            function($e) { Events::onTemplateInstanceInsert($e); }
-        );
     }
 
     /**
@@ -31,6 +23,28 @@ class Module extends ContentContainerModule
     {
         return Url::to(['/mailinglists/admin']);
     }
+
+
+    public function getContentContainerTypes()
+    {
+        return [
+            Space::className(),
+        ];
+    }
+
+    public function getContentContainerName(ContentContainerActiveRecord $container)
+    {
+        return "Mailing-List";
+    }
+
+    public function getContentContainerDescription(ContentContainerActiveRecord $container)
+    {
+        if ($container instanceof Space) {
+            return "Mailing-list to space members";
+        }
+    }
+
+
 }
 
 

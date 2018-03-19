@@ -12,6 +12,7 @@ class SendSettingsForm extends Model
     public $entry = 0;
     public $toNewsletter = false;
     public $toMembers = false;
+    public $includePage = false;
 
     public function rules()
     {
@@ -19,6 +20,7 @@ class SendSettingsForm extends Model
             ['entry', 'integer'],
             ['toNewsletter', 'boolean'],
             ['toMembers', 'boolean'],
+            ['includePage', 'boolean'],
         ];
     }
 
@@ -27,6 +29,7 @@ class SendSettingsForm extends Model
         return [
             ['toNewsletter', 'Send to newsletter'],
             ['toMembers', 'Send to members'],
+            ['includePage', 'Include page content']
         ];
     }
 
@@ -35,6 +38,9 @@ class SendSettingsForm extends Model
         return [
             ['toNewsletter', 'Send to all people subscribed to the newsletter'],
             ['toMembers', 'Send to all the member of the social network'],
+            ['includePage',
+             'Include the content of the edited page instead of using '.
+                'default body'],
         ];
     }
 }

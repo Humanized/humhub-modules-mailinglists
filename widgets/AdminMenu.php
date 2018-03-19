@@ -15,7 +15,7 @@ use humhub\widgets\BaseMenu;
  */
 class AdminMenu extends BaseMenu
 {
-
+    public $space = null;
     public $template = "@humhub/widgets/views/tabMenu";
     public $type = "";
 
@@ -25,23 +25,30 @@ class AdminMenu extends BaseMenu
         return (
             $controller->module &&
             $controller->module->id == 'mailinglists' &&
-            $controller->id == 'admin' &&
+            ($controller->id == 'admin' || $controller->id == 'container') &&
             $controller->action->id == $action
         );
     }
 
     public function init()
     {
+        $space = $this->space;
         $this->addItem([
             'label' => "Mails",
-            'url' => Url::to(['/mailinglists/admin']),
+            'url' => ($space) ?
+                $space->createUrl('container/'):
+                Url::to(['admin/']),
             'sortOrder' => 100,
-            'isActive' => AdminMenu::isActive('index') || AdminMenu::isActive('entries') || AdminMenu::isActive('send')
+            'isActive' => AdminMenu::isActive('index') ||
+                          AdminMenu::isActive('entries') ||
+                          AdminMenu::isActive('send')
         ]);
 
         $this->addItem([
             'label' => "Settings",
-            'url' => Url::to(['/mailinglists/admin/settings']),
+            'url' => ($space) ?
+                $space->createUrl('container/settings'):
+                Url::to(['admin/settings']),
             'sortOrder' => 100,
             'isActive' => AdminMenu::isActive('settings')
         ]);

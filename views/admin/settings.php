@@ -8,6 +8,7 @@ use humhub\widgets\Button;
 use humhub\modules\custom_pages\controllers\ViewController;
 
 use humhub\modules\mailinglists\widgets\AdminMenu;
+use humhub\modules\mailinglists\models\Settings;
 
 /**
  *  @param str message print info message
@@ -18,7 +19,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
         <strong>Mailing-lists</strong>
     </div>
 
-    <?= AdminMenu::widget() ?>
+    <?= AdminMenu::widget([ 'space' => $space]) ?>
 
     <div class="panel-body">
         <div class="clearfix">
@@ -31,17 +32,30 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
         </div>
         <hr/>
 
+        <div class="clearfix">
         <?php $form = ActiveForm::begin() ?>
-            <div id="globalSettings">
-                <?= $form->field($model, 'globalTemplate')->dropDownList(
-                    $model->templates, ['value' => $model->globalTemplate]) ?>
-                <?= $form->field($model, 'globalSignature')->textarea() ?>
-            </div>
+            <?= $form->field($model, 'mailHeader')->textarea() ?>
+            <?= $form->field($model, 'mailBody')->textarea(['rows' => 10]) ?>
+            <?= $form->field($model, 'mailSignature')->textarea(['rows' => 5]) ?>
+            <?= $form->field($model, 'mailMention')->textarea(['rows' => 5]) ?>
+
+        <p>Available dynamic content:
+        <?php
+            $maps = Settings::mailMapping();
+            $maps = array_keys($maps);
+            $maps = array_map(function($v) {
+                return '<i>{{ ' . $v . ' }}</i>';
+            }, $maps);
+            echo join(', ', $maps);
+        ?>
+        </p>
+
         <hr>
 
         <?= Button::save()->submit() ?>
 
         <?php ActiveForm::end() ?>
+        </div>
     </div>
 </div>
 

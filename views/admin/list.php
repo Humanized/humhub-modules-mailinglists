@@ -8,6 +8,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
 /**
  *  @param [MailingListEntry] $entries
  *  @param str $message print informational message
+ *  @param space space
  */
 ?>
 <div class="panel panel-default">
@@ -15,7 +16,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
         <strong>Mailing-lists</strong>
     </div>
 
-    <?= AdminMenu::widget() ?>
+    <?= AdminMenu::widget(['space' => $space]) ?>
 
     <div class="panel-body">
         <div class="clearfix">
@@ -30,7 +31,11 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
 
         <div class="clearfix">
             <h5>Create mail</h5>
-            <form method="POST" action="<?= Url::to(["admin/new-page"]) ?>"
+            <form method="POST" action="<?=
+                    ($space) ?
+                        $space->createUrl('container/add-page') :
+                        Url::to(["admin/add-page"])
+                ?>"
                 style="display: flex; flex-orientation:row;"
                 >
                 <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
@@ -71,7 +76,13 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                     <div class="pull-right">
                         <button class="btn btn-xs btn-primary"
                             data-action-click="ui.modal.load"
-                            data-action-url="<?= Url::toRoute(['admin/send', 'entry' => $entry->id], true)
+                            data-action-url="<?= Url::toRoute(
+                                $space ?
+                                    ['container/send', 'entry' => $entry->id,
+                                        'sguid' => $space->guid] :
+                                    ['admin/send', 'entry' => $entry->id],
+                                true
+                            )
                             ?>"
                         >
                             <li class="fa fa-envelope"></li>
@@ -87,17 +98,18 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                         </button> -->
                         <?= Html::a(
                             '<li class="fa fa-pencil" title="Edit"></li>',
-                            ['/custom_pages/view/view', 'id' => $page->id, 'editMode' => 1],
-                            ['class' => 'btn btn-xs btn-primary', 'target' => '_blank']
-                        ) ?>
-                        <?= Html::a(
-                            '<li class="fa fa-cogs" title="Page Settings"></li>',
-                            ['/custom_pages/admin/edit', 'id' => $page->id],
+                            $space ?
+                                ['/custom_pages/container/edit', 'id' => $page->id,
+                                    'sguid' => $space->guid] :
+                                ['/custom_pages/admin/edit', 'id' => $page->id],
                             ['class' => 'btn btn-xs btn-primary', 'target' => '_blank']
                         ) ?>
                         <?= Html::a(
                             '<li class="fa fa-trash" title="Delete the Mail"></li>',
-                            ['/custom_pages/admin/delete', 'id' => $page->id],
+                            $space ?
+                                ['/custom_pages/container/delete', 'id' => $page->id,
+                                    'sguid' => $space->guid] :
+                                ['/custom_pages/admin/delete', 'id' => $page->id],
                             ['class' => 'btn btn-xs btn-danger']
                         ) ?>
                     </div>
@@ -105,7 +117,6 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
             </tr>
             <?php
         }
-
         ?>
         </tbody></table>
     </div>

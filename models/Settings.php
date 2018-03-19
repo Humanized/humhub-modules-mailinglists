@@ -14,24 +14,75 @@ use yii\helpers\ArrayHelper;
 class Settings extends Model
 {
     public $settings;
-    public $globalTemplate;
-    public $globalSignature;
-    public $globalSignatureMembers;
+    public $contentContainer;
 
-    public $defaultSignature =
-        '<hr/><p style="font-size: 0.9em">' .
-        'You can unsubscribe from this mailing-list following this link: <a href="{{ member.unsubscribe }}">{{ member.unsubscribe }}</a>' .
+    /**
+     *  Email header
+     */
+    public $mailHeader;
+    /**
+     *  Email body (when page content is not included directly)
+     */
+    public $mailBody;
+    /**
+     *  Email signature
+     */
+    public $mailSignature;
+    /**
+     *  Unsubscribe/Legal mention
+     */
+    public $mailMention;
+
+    public $defaultHeader = 'Dear people,';
+    public $defaultSignature = 'Regards,';
+    public $defaultBody =
+        "<p>" .
+        "We just published our last informational mail. Why don't you " .
+        'come out and take a look? <a href="{{ page.url }}">{{ page.url }}</a>?' .
+        "</p>"
+         ;
+    public $defaultMention =
+        '--<p style="font-size: 0.9em">' .
+        'You can unsubscribe from this mailing-list following this link: ' .
+        '<a href="{{ member.unsubscribe }}">{{ member.unsubscribe }}</a>' .
         '</p>'
     ;
 
+
     /**
-     *  Return a list of available templates as [ $id => $name ]
+     *  Mapping of items that can be used in mail elements, such as:
+     *  `{{ member.unsubscribe }}`;
      */
-    static public function getTemplates() {
-        return ArrayHelper::map(
-            Template::find()->select(['id','name'])->asArray()->all(),
-            'id', 'name'
-        );
+    public static function mailMapping() {
+        return [
+            "member.token" => function($p, $m) {
+                if($m instanceof Membership)
+                    return $m->token;
+                return "";
+            },
+            "member.unsubscribe" => function($p, $m) {
+                if($m instanceof Membership)
+                    return Url::toRoute(['member/unsubscribe', 'token' => $m->token],true);
+                return "";
+            },
+            "page.url" => function ($p, $m) {
+                return Url::toRoute(['/custom_pages/view', 'id' => $p->id], true);
+            }
+        ];
+    }
+
+    /**
+     *  Render mail content applying mappings.
+     */
+    public static function renderMail($content, $page, $member) {
+        foreach(Settings::mailMapping() as $key => $map) {
+            $content = preg_replace(
+                '{{{\s*' . str_replace('.','\\.', $key) . '\s*}}}',
+                $map($page, $member),
+                $item
+            );
+        }
+        return $item;
     }
 
     /**
@@ -39,11 +90,23 @@ class Settings extends Model
      */
     public function init()
     {
-        $this->settings = Yii::$app->getModule('mailinglists')->settings;
-        $this->globalTemplate = intval($this->settings->get('globalTemplate', 0));
-        $this->globalSignature = $this->settings->get(
-            'globalSignature', $this->defaultSignature
-        );
+        $settings = $this->getSettings();
+        $this->mailHeader = $settings->get('globalHeader', $this->defaultHeader);
+        $this->mailBody = $settings->get('globalBody', $this->defaultBody);
+        $this->mailSignature = $settings->get('globalSignature', $this->defaultSignature);
+        $this->mailMention = $settings->get('globalMention', $this->defaultMention);
+    }
+
+
+    function getSettings()
+    {
+        if(!$this->settings) {
+            $module = Yii::$app->getModule('mailinglists');
+            $this->settings = ($this->contentContainer) ?
+                $module->settings->contentContainer($this->contentContainer) :
+                $module->settings;
+        }
+        return $this->settings;
     }
 
     /**
@@ -52,11 +115,12 @@ class Settings extends Model
      */
     function updateSetting($name, $defaultValue)
     {
+        $settings = $this->getSettings();
         if(empty($this->$name)) {
-            $this->settings->delete($name);
+            $settings->delete($name);
             $this->$name = $defaultValue;
         } else {
-            $this->settings->set($name, $this->$name);
+            $settings->set($name, $this->$name);
         }
     }
 
@@ -68,8 +132,10 @@ class Settings extends Model
         if(!$this->validate()) {
             return false;
         }
-        $this->updateSetting('globalTemplate', 0);
-        $this->updateSetting('globalSignature', $this->defaultSignature);
+        $this->updateSetting('mailHeader', $this->defaultHeader);
+        $this->updateSetting('mailSignature', $this->defaultSignature);
+        $this->updateSetting('mailMention', $this->defaultMention);
+        $this->updateSetting('mailBody', $this->defaultBody);
         return true;
     }
 
@@ -80,8 +146,10 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['globalTemplate', 'integer'],
-            ['globalSignature', 'string'],
+            ['mailHeader', 'string'],
+            ['mailBody', 'string'],
+            ['mailSignature', 'string'],
+            ['mailMention', 'string'],
         ];
     }
 
@@ -91,8 +159,10 @@ class Settings extends Model
     public function attributeLabels()
     {
         return [
-            'globalTemplate' => 'Template',
-            'globalSignature' => 'Signature',
+            'mailHeader' => 'Emails Header',
+            'mailBody' => 'Emails Body',
+            'mailSignature' => 'Emails Signature',
+            'mailMention' => 'Legal Mention',
         ];
     }
 
@@ -102,8 +172,10 @@ class Settings extends Model
     public function attributeHints()
     {
         return [
-            'globalTemplate' => 'This template will be used for mails.',
-            'globalSignature' => ''
+            'mailHeader' => '',
+            'mailBody' => 'body of emails when they don\'t include the page contnt',
+            'mailSignature' => '',
+            'mailMention' => 'legal mention such as unsubscribe etc.',
         ];
     }
 }
