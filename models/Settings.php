@@ -46,11 +46,14 @@ class Settings extends Model
     public function init()
     {
         $settings = $this->getSettings();
-        $this->mailTemplate = $settings->get('mailTemplate', 0);
+        $gsettings = $this->global();
 
-        // those are only editable on global
-        $this->mailBody = $this->global()->get('mailBody', $this->defaultBody);
-        $this->mailMention = $this->global()->get('mailMention', $this->defaultMention);
+        $this->mailTemplate = $settings->get('mailTemplate',
+            $gsettings->mailTemplate ? $gsettings->mailTemplate : 0
+        );
+        // only global
+        $this->mailBody = $gsettings()->get('mailBody', $this->defaultBody);
+        $this->mailMention = $gsettings()->get('mailMention', $this->defaultMention);
     }
 
 
@@ -111,7 +114,7 @@ class Settings extends Model
             return false;
         }
         $this->update('mailTemplate', 0);
-        if($this->space) {
+        if(!$this->space) {
             $this->update('mailBody', $this->defaultBody);
             $this->update('mailMention', $this->defaultMention);
         }
