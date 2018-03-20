@@ -20,8 +20,9 @@ class m180317_200346_init_commit extends Migration
             'id' => $this->primaryKey(),
             'page_id' => $this->integer(),
             'container_page_id' => $this->integer(),
-            'is_sent' => $this->boolean()->defaultValue(false)
-                ], $this->tableOptions);
+            'sent_at' => $this->dateTime()->null(),
+
+        ], $this->tableOptions);
 
         $this->addForeignKey(
             'fk_mail_template_instance', 'mailing_list_entry', 'page_id',

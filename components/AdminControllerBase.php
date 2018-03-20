@@ -125,19 +125,10 @@ class AdminControllerBase extends Behavior
             );
         }
 
-        $params = [
-             'id' => $entry->page->id,
-             'editMode' => 1
-        ];
         return $this->controller->redirect($space ?
-            $space->createUrl('/custom_pages/container/view', $params) :
-            Url::to(['/custom_pages/view'] + $params)
-        );
-
-        /*return $this->controller->redirect($space ?
             $space->createUrl('container/edit', ['id' => $entry->id]) :
             Url::to(['admin/edit', 'id' => $entry->id, ])
-        );*/
+        );
     }
 
     /**

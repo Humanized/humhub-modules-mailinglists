@@ -54,7 +54,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
         <table class="table"><tbody>
             <tr>
                 <th style="min-width: 60%;">Title</th>
-                <th>Status</th>
+                <th>Send Status</th>
                 <th>Action</th>
             </tr>
         <?php
@@ -63,14 +63,16 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                 $page = $entry->page;
             ?>
             <tr style="<?php
-                if(!$entry->is_sent)
-                    echo "background-color:rgba(255, 160, 0, 0.2);";
-                else
+                if($entry->sent_at)
                     echo "background-color:rgba(180, 255, 0, 0.2);";
+                else
+                    echo "background-color:rgba(255, 160, 0, 0.2);";
                 ?>">
                 <td><?= $page->title ?></td>
                 <td>
-                    <?= ($entry->is_sent ? "Sent" : "<strong>Not Sent</strong>") ?>
+                <?= $entry->sent_at ?
+                    'Sent <i><small>(' . $entry->sent_at .')</small></i>':
+                    "<strong>Not Sent</strong>" ?>
                 </td>
                 <td>
                     <div class="pull-right">

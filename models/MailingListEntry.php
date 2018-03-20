@@ -2,6 +2,8 @@
 
 namespace humhub\modules\mailinglists\models;
 
+use DateTime;
+
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Url;
@@ -213,7 +215,7 @@ class MailingListEntry extends ActiveRecord
                 ;
         }
 
-        $this->is_sent = true;
+        $this->sent_at = (new DateTime())->format("Y-m-d H:i:s");
         $this->save();
         return count($done);
     }
