@@ -23,7 +23,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
             <h4>Manage Mails</h4>
             <?php
                 if(isset($message) && $message) {
-                    echo '<div>' . $message . '</div>';
+                    echo '<div class="alert-info">' . $message . '</div>';
                 }
             ?>
         </div>
@@ -39,7 +39,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                 style="display: flex; flex-orientation:row;"
                 >
                 <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
-                <input type="text" class="form-control" flex="1" placeHolder="Mail Subject" name="title">
+                <input type="text" required class="form-control" flex="1" placeHolder="Mail Subject" name="title">
                 <button class="btn btn-success" style="display: inline;" >
                     <li class="fa fa-plus">
                         Create new mail
@@ -71,7 +71,7 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                 <td><?= $page->title ?></td>
                 <td>
                 <?= $entry->sent_at ?
-                    'Sent <i><small>(' . $entry->sent_at .')</small></i>':
+                    'Sent <small>(' . $entry->sent_at .')</small>':
                     "<strong>Not Sent</strong>" ?>
                 </td>
                 <td>

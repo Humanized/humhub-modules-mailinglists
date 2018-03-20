@@ -113,7 +113,7 @@ class AdminControllerBase extends Behavior
         $request = Yii::$app->request;
         $title = $request->post('title');
         if(!$title)
-            return "";
+            return $this->runEntries("You forgot to give a subject to the mail.");
 
         $space = $this->getSpace();
         $settings = new Settings(['space' => $space]);
