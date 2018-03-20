@@ -38,7 +38,7 @@ class AdminControllerBase extends Behavior
     function getEntry($post = false) {
         // FIXME: ensure correspondance between entry id and space's
         $request = Yii::$app->request;
-        $entry = intval($request->get('entry'));
+        $entry = intval($request->get('id'));
         return MailingListEntry::findOne($entry);
     }
 
@@ -75,7 +75,7 @@ class AdminControllerBase extends Behavior
     }
 
 
-    public function runEntries()
+    public function runEntries($message = '')
     {
         if(!$this->hasPerms())
             return "";
@@ -84,6 +84,7 @@ class AdminControllerBase extends Behavior
         return $this->controller->render('@mailinglists/views/admin/list', [
             'entries' => $this->entries->orderBy('id DESC')->all(),
             'space' => $space,
+            'message' => $message,
         ]);
     }
 
@@ -92,12 +93,12 @@ class AdminControllerBase extends Behavior
         if(!$this->hasPerms())
             return "";
 
-        $model = new Settings();
+        $space = $this->getSpace();
+        $model = new Settings(['space' => $space]);
         if($model->load(Yii::$app->request->post()) && $model->save()) {
             $this->controller->view->saved();
         }
 
-        $space = $this->getSpace();
         return $this->controller->render('@mailinglists/views/admin/settings', [
             'model' => $model,
             'space' => $space,
@@ -115,30 +116,28 @@ class AdminControllerBase extends Behavior
             return "";
 
         $space = $this->getSpace();
-        $page = null;
-        if($space) {
-            $page = new ContainerPage();
-            $page->content->container = $space;
+        $settings = new Settings(['space' => $space]);
+        $entry = MailingListEntry::create($space, $settings->mailTemplate, $title);
+
+        if(!$entry) {
+            return $this->runEntries(
+                'Could not create mail. Did set a mail template in settings?'
+            );
         }
-        else {
-            $page = new Page();
-            $page->navigation_class = Page::NAV_CLASS_EMPTY;
-        }
 
-        $page->title = $title;
-        $page->icon = 'fa-envelope';
-        $page->type = \humhub\modules\custom_pages\components\Container::TYPE_MARKDOWN;
-        $page->save();
-
-        $entry = MailingListEntry::fromPage($page);
-        $entry->is_sent = false;
-        $entry->save();
-
-        // FIXME: container page
+        $params = [
+             'id' => $entry->page->id,
+             'editMode' => 1
+        ];
         return $this->controller->redirect($space ?
-            $space->createUrl('container/edit', ['entry' => $entry->id]) :
-            Url::to(['admin/edit', 'entry' => $entry->id, ])
+            $space->createUrl('/custom_pages/container/view', $params) :
+            Url::to(['/custom_pages/view'] + $params)
         );
+
+        /*return $this->controller->redirect($space ?
+            $space->createUrl('container/edit', ['id' => $entry->id]) :
+            Url::to(['admin/edit', 'id' => $entry->id, ])
+        );*/
     }
 
     /**
@@ -157,16 +156,15 @@ class AdminControllerBase extends Behavior
         $model = new EditPageForm([
             'entry' => $entry->id,
             'subject' => $page->title,
-            'content' => $page->pageContent,
         ]);
 
         // send
         if($model->load(Yii::$app->request->post()) && $model->save()) {
-            $space = $this->space;
+            /*$space = $this->space;
             return $this->controller->redirect($space ?
                 $space->createUrl('container/', ['id' => $page->id]) :
                 Url::to(['admin/', 'id' => $page->id, ])
-            );
+            );*/
         }
 
         return $this->controller->render('@mailinglists/views/admin/edit', [
@@ -180,7 +178,8 @@ class AdminControllerBase extends Behavior
     /**
      *  Display send options form (before sending)
      */
-    function sendSettings($request, $model, $entry) {
+    function sendSettings($request, $model) {
+        $entry = $this->entry;
         $model->entry = $entry->id;
         return SendSettingsModal::widget([
             'model' => $model,
@@ -192,7 +191,8 @@ class AdminControllerBase extends Behavior
     /**
      *  Actually send mails for the given entry
      */
-    function sendMails($request, $model, $entry) {
+    function sendMails($request, $model) {
+        $entry = $this->entry;
         $space = $this->getSpace();
         $members = [];
 
@@ -210,13 +210,8 @@ class AdminControllerBase extends Behavior
                 );
         }
 
-        $entry->sendMails($space, $members, $model->includePage);
-
-        return $this->controller->render('@mailinglists/views/admin/list', [
-            'space' => $space,
-            'entries' => $this->getEntries()->all(),
-            'message' => 'Mails have been successfully sent!'
-        ]);
+        $entry->sendMails($members, $space, $model->includePage);
+        return $this->runEntries('Mails have been successfully sent!');
     }
 
 
@@ -225,7 +220,7 @@ class AdminControllerBase extends Behavior
      */
     public function runSend()
     {
-        if(!$this->hasPerms())
+        if(!$this->hasPerms() || !$this->entry)
             return "";
 
         $request = Yii::$app->request;
@@ -233,13 +228,11 @@ class AdminControllerBase extends Behavior
 
         // send
         if($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $entry = MailingListEntry::findOne($model->entry);
-            return $this->sendMails($request, $model, $entry);
+            return $this->sendMails($request, $model);
         }
 
         // settings
-        $entry = MailingListEntry::findOne($request->get('entry'));
-        return $this->sendSettings($request, $model, $entry);
+        return $this->sendSettings($request, $model);
     }
 
 }

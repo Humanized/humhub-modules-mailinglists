@@ -33,25 +33,28 @@ class AdminMenu extends BaseMenu
     public function init()
     {
         $space = $this->space;
+        $active = false;
+
+        $isActive = AdminMenu::isActive('settings');
+        $active = $active || $isActive;
+        $this->addItem([
+            'label' => "Settings",
+            'url' => ($space) ?
+                $space->createUrl('container/settings'):
+                Url::to(['admin/settings']),
+            'sortOrder' => 500,
+            'isActive' => $isActive,
+        ]);
+
         $this->addItem([
             'label' => "Mails",
             'url' => ($space) ?
                 $space->createUrl('container/'):
                 Url::to(['admin/']),
             'sortOrder' => 100,
-            'isActive' => AdminMenu::isActive('index') ||
-                          AdminMenu::isActive('entries') ||
-                          AdminMenu::isActive('send')
+            'isActive' => !$active
         ]);
 
-        $this->addItem([
-            'label' => "Settings",
-            'url' => ($space) ?
-                $space->createUrl('container/settings'):
-                Url::to(['admin/settings']),
-            'sortOrder' => 100,
-            'isActive' => AdminMenu::isActive('settings')
-        ]);
 
         parent::init();
     }

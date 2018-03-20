@@ -11,7 +11,9 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
 use humhub\modules\mailinglists\models\MailingListEntry;
 
 /**
- *  @param str message print info message
+ *  @param str $message: print info message
+ *  @param Space|null $space: current space
+ *  @param Settings $model: settings model
  */
 ?>
 <div class="panel panel-default">
@@ -34,22 +36,27 @@ use humhub\modules\mailinglists\models\MailingListEntry;
 
         <div class="clearfix">
         <?php $form = ActiveForm::begin() ?>
-            <?= $form->field($model, 'mailHeader')->textarea() ?>
+            <?= $form->field($model, 'mailTemplate')->dropDownList(
+                    $model->templates, ['value' => $model->mailTemplate]) ?>
+
+            <?php if(!$space) { ?>
             <?= $form->field($model, 'mailBody')->textarea(['rows' => 10]) ?>
-            <?= $form->field($model, 'mailSignature')->textarea(['rows' => 5]) ?>
             <?= $form->field($model, 'mailMention')->textarea(['rows' => 5]) ?>
 
-        <p>Available dynamic content:
-        <?php
-            $maps = MailingListEntry::valuesMap();
-            $maps = array_keys($maps);
-            $maps = array_map(function($v) {
-                return '<i>{{ ' . $v . ' }}</i>';
-            }, $maps);
-            echo join(', ', $maps);
-        ?>
-        </p>
-
+            <p>These values can be used in mail body and mention:
+            <?php
+                $maps = MailingListEntry::valuesMap();
+                $maps = array_keys($maps);
+                $maps = array_map(function($v) {
+                    return '<i>{{ ' . $v . ' }}</i>';
+                }, $maps);
+                echo join(', ', $maps);
+            ?>
+            </p>
+            <?php } else { ?>
+            <?= $form->field($model, 'mailBody')->hiddenInput()->label(false)->hint(false) ?>
+            <?= $form->field($model, 'mailMention')->hiddenInput()->label(false)->hint(false) ?>
+            <?php } ?>
         <hr>
 
         <?= Button::save()->submit() ?>

@@ -11,14 +11,12 @@ class EditPageForm extends Model
 {
     public $entry;
     public $subject;
-    public $content;
 
     public function rules()
     {
         return [
             ['entry', 'integer'],
             ['subject', 'string'],
-            ['content', 'string'],
         ];
     }
 
@@ -30,8 +28,6 @@ class EditPageForm extends Model
         $entry = MailingListEntry::findOne($this->entry);
         $page = $entry->page;
         $page->title = $this->subject;
-        $attr = $page->getPageContentProperty();
-        $page->$attr = $this->content;
         $page->save();
         return true;
     }

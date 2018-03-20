@@ -78,9 +78,9 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                             data-action-click="ui.modal.load"
                             data-action-url="<?= Url::toRoute(
                                 $space ?
-                                    ['container/send', 'entry' => $entry->id,
+                                    ['container/send', 'id' => $entry->id,
                                         'sguid' => $space->guid] :
-                                    ['admin/send', 'entry' => $entry->id],
+                                    ['admin/send', 'id' => $entry->id],
                                 true
                             )
                             ?>"
@@ -90,23 +90,26 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                             Send
                         </button>
                         <?= Html::a(
-                            '<li class="fa fa-pencil" title="Edit"></li>',
+                            '<li class="fa fa-pencil"></li>',
                             Url::toRoute(
                                 $space ?
-                                    ['container/edit', 'entry' => $entry->id,
+                                    ['container/edit', 'id' => $entry->id,
                                         'sguid' => $space->guid] :
-                                    ['admin/edit', 'entry' => $entry->id],
+                                    ['admin/edit', 'id' => $entry->id],
                                 true
                             ),
-                            ['class' => 'btn btn-xs btn-primary']
-                        ) ?>
+                            ['class' => 'btn btn-xs btn-primary',
+                             'title' => "Edit"]
+                        )
+                        ?>
                         <?= Html::a(
-                            '<li class="fa fa-cogs" title="Advanced Settings"></li>',
+                            '<li class="fa fa-cogs"></li>',
                             $space ?
                                 ['/custom_pages/container/edit', 'id' => $page->id,
                                     'sguid' => $space->guid] :
                                 ['/custom_pages/admin/edit', 'id' => $page->id],
                                 ['class' => 'btn btn-xs btn-primary',
+                                 'title' => "Advanced Settings",
                                  'target' => '_blank']
                         ) ?>
                     </div>

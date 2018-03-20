@@ -14,27 +14,18 @@ use yii\helpers\ArrayHelper;
 class Settings extends Model
 {
     public $settings;
-    public $contentContainer;
+    public $space;
 
-    /**
-     *  Email header
-     */
-    public $mailHeader;
+    public $mailTemplate;
     /**
      *  Email body (when page content is not included directly)
      */
     public $mailBody;
     /**
-     *  Email signature
-     */
-    public $mailSignature;
-    /**
      *  Unsubscribe/Legal mention
      */
     public $mailMention;
 
-    public $defaultHeader = 'Dear people,';
-    public $defaultSignature = 'Regards,';
     public $defaultBody =
         "<p>" .
         "We just published our last informational mail. Why don't you " .
@@ -55,19 +46,42 @@ class Settings extends Model
     public function init()
     {
         $settings = $this->getSettings();
-        $this->mailHeader = $settings->get('globalHeader', $this->defaultHeader);
-        $this->mailBody = $settings->get('globalBody', $this->defaultBody);
-        $this->mailSignature = $settings->get('globalSignature', $this->defaultSignature);
-        $this->mailMention = $settings->get('globalMention', $this->defaultMention);
+        $this->mailTemplate = $settings->get('mailTemplate', 0);
+
+        // those are only editable on global
+        $this->mailBody = $this->global()->get('mailBody', $this->defaultBody);
+        $this->mailMention = $this->global()->get('mailMention', $this->defaultMention);
     }
 
 
+    /**
+     *  Return a list of all templates usable in dropdown menu
+     */
+    public function getTemplates()
+    {
+        return ArrayHelper::map(
+            Template::find()->select(['id','name'])->asArray()->all(),
+            'id', 'name'
+        );
+    }
+
+    /**
+     *  Return global settings
+     */
+    function global()
+    {
+        return Yii::$app->getModule('mailinglists')->settings;
+    }
+
+    /**
+     *  Return app/module settings depending on $this->space
+     */
     function getSettings()
     {
         if(!$this->settings) {
             $module = Yii::$app->getModule('mailinglists');
-            $this->settings = ($this->contentContainer) ?
-                $module->settings->contentContainer($this->contentContainer) :
+            $this->settings = ($this->space) ?
+                $module->settings->contentContainer($this->space) :
                 $module->settings;
         }
         return $this->settings;
@@ -77,7 +91,7 @@ class Settings extends Model
      *  Update a given module setting using this instance
      *  attributes.
      */
-    function updateSetting($name, $defaultValue)
+    function update($name, $defaultValue)
     {
         $settings = $this->getSettings();
         if(empty($this->$name)) {
@@ -96,10 +110,11 @@ class Settings extends Model
         if(!$this->validate()) {
             return false;
         }
-        $this->updateSetting('mailHeader', $this->defaultHeader);
-        $this->updateSetting('mailSignature', $this->defaultSignature);
-        $this->updateSetting('mailMention', $this->defaultMention);
-        $this->updateSetting('mailBody', $this->defaultBody);
+        $this->update('mailTemplate', 0);
+        if($this->space) {
+            $this->update('mailBody', $this->defaultBody);
+            $this->update('mailMention', $this->defaultMention);
+        }
         return true;
     }
 
@@ -110,9 +125,8 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['mailHeader', 'string'],
+            ['mailTemplate', 'integer'],
             ['mailBody', 'string'],
-            ['mailSignature', 'string'],
             ['mailMention', 'string'],
         ];
     }
@@ -123,9 +137,7 @@ class Settings extends Model
     public function attributeLabels()
     {
         return [
-            'mailHeader' => 'Emails Header',
             'mailBody' => 'Emails Body',
-            'mailSignature' => 'Emails Signature',
             'mailMention' => 'Legal Mention',
         ];
     }
@@ -136,9 +148,7 @@ class Settings extends Model
     public function attributeHints()
     {
         return [
-            'mailHeader' => '',
             'mailBody' => 'body of emails when they don\'t include the page contnt',
-            'mailSignature' => '',
             'mailMention' => 'legal mention such as unsubscribe etc.',
         ];
     }
