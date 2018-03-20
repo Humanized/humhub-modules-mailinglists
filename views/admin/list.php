@@ -89,22 +89,19 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                             <li class="fa fa-envelope"></li>
                             Send
                         </button>
-<?php /* <button class="btn btn-xs btn-primary"
-                            data-action-click="ui.modal.load"
-                            data-action-url="<?= Url::toRoute(
-                                $space ?
-                                    ['container/edit-page', 'entry' => $entry->id,
-                                        'sguid' => $space->guid] :
-                                    ['admin/edit-page', 'entry' => $entry->id],
-                                true
-                            )
-                            ?>"
-                            title="Edit mail"
-                        >
-                            <li class="fa fa-pencil"></li>
-                            </button> */ ?>
                         <?= Html::a(
-                            '<li class="fa fa-pencil" title="Edit Mail"></li>',
+                            '<li class="fa fa-pencil" title="Edit"></li>',
+                            Url::toRoute(
+                                $space ?
+                                    ['container/edit', 'entry' => $entry->id,
+                                        'sguid' => $space->guid] :
+                                    ['admin/edit', 'entry' => $entry->id],
+                                true
+                            ),
+                            ['class' => 'btn btn-xs btn-primary']
+                        ) ?>
+                        <?= Html::a(
+                            '<li class="fa fa-cogs" title="Advanced Settings"></li>',
                             $space ?
                                 ['/custom_pages/container/edit', 'id' => $page->id,
                                     'sguid' => $space->guid] :

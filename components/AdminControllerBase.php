@@ -82,7 +82,7 @@ class AdminControllerBase extends Behavior
 
         $space = $this->getSpace();
         return $this->controller->render('@mailinglists/views/admin/list', [
-            'entries' => $this->getEntries()->all(),
+            'entries' => $this->entries->orderBy('id DESC')->all(),
             'space' => $space,
         ]);
     }
@@ -136,15 +136,15 @@ class AdminControllerBase extends Behavior
 
         // FIXME: container page
         return $this->controller->redirect($space ?
-            $space->createUrl('/custom_pages/container/edit', ['id' => $page->id]) :
-            Url::to(['/custom_pages/admin/edit', 'id' => $page->id, ])
+            $space->createUrl('container/edit', ['entry' => $entry->id]) :
+            Url::to(['admin/edit', 'entry' => $entry->id, ])
         );
     }
 
     /**
-     *  Page editor into a modal window
+     *  Edit a mail
      */
-    public function runEditPage()
+    public function runEdit()
     {
         if(!$this->hasPerms())
             return "";
@@ -169,10 +169,10 @@ class AdminControllerBase extends Behavior
             );
         }
 
-        return EditPageModal::widget([
+        return $this->controller->render('@mailinglists/views/admin/edit', [
             'model' => $model,
             'entry' => $entry,
-            'space' => $this->getSpace(),
+            'space' => $this->space,
         ]);
     }
 
@@ -181,12 +181,11 @@ class AdminControllerBase extends Behavior
      *  Display send options form (before sending)
      */
     function sendSettings($request, $model, $entry) {
-        $space = $this->getSpace();
         $model->entry = $entry->id;
         return SendSettingsModal::widget([
             'model' => $model,
             'entry' => $entry,
-            'space' => $space,
+            'space' => $this->space,
         ]);
     }
 

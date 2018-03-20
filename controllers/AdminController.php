@@ -54,9 +54,9 @@ class AdminController extends Controller
     /**
      *  Edit a page and go for it
      */
-    public function actionEditPage()
+    public function actionEdit()
     {
-        return $this->runEditPage();
+        return $this->runEdit();
     }
 
     /**
