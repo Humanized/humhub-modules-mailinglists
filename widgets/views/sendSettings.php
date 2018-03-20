@@ -18,9 +18,15 @@ $title = 'Send a mail: ' . $page->title;
     ])
 ?>
         <?= $form->field($model, 'entry')->hiddenInput()->label(false) ?>
+        <?php if($space) { ?>
+        This mail will be sent to all members of <?= $space->displayName ?>.
+        <?= $form->field($model, 'toNewsletter')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'toMembers')->hiddenInput()->label(false) ?>
+        <?php } else { ?>
         <?= $form->field($model, 'toNewsletter')->checkbox() ?>
         <?= $form->field($model, 'toMembers')->checkbox() ?>
         <br>
+        <?php } ?>
         <?= $form->field($model, 'includePage')->checkbox() ?>
         <hr>
         <div style="text-align:right;" >

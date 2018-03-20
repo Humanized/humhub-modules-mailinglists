@@ -84,33 +84,33 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                                 true
                             )
                             ?>"
+                            title="Send mails"
                         >
                             <li class="fa fa-envelope"></li>
                             Send
                         </button>
-                        <!-- <button class="btn btn-xs btn-primary"
-                            title="Edit page"
+<?php /* <button class="btn btn-xs btn-primary"
                             data-action-click="ui.modal.load"
-                            data-action-url="<?= Url::toRoute(['admin/page-edit-modal', 'page' => $page->id], true)
+                            data-action-url="<?= Url::toRoute(
+                                $space ?
+                                    ['container/edit-page', 'entry' => $entry->id,
+                                        'sguid' => $space->guid] :
+                                    ['admin/edit-page', 'entry' => $entry->id],
+                                true
+                            )
                             ?>"
+                            title="Edit mail"
                         >
                             <li class="fa fa-pencil"></li>
-                        </button> -->
+                            </button> */ ?>
                         <?= Html::a(
-                            '<li class="fa fa-pencil" title="Edit"></li>',
+                            '<li class="fa fa-pencil" title="Edit Mail"></li>',
                             $space ?
                                 ['/custom_pages/container/edit', 'id' => $page->id,
                                     'sguid' => $space->guid] :
                                 ['/custom_pages/admin/edit', 'id' => $page->id],
-                            ['class' => 'btn btn-xs btn-primary', 'target' => '_blank']
-                        ) ?>
-                        <?= Html::a(
-                            '<li class="fa fa-trash" title="Delete the Mail"></li>',
-                            $space ?
-                                ['/custom_pages/container/delete', 'id' => $page->id,
-                                    'sguid' => $space->guid] :
-                                ['/custom_pages/admin/delete', 'id' => $page->id],
-                            ['class' => 'btn btn-xs btn-danger']
+                                ['class' => 'btn btn-xs btn-primary',
+                                 'target' => '_blank']
                         ) ?>
                     </div>
                 </td>

@@ -3,14 +3,13 @@
 namespace humhub\modules\mailinglists\controllers;
 
 use Yii;
-use humhub\modules\admin\components\Controller;
+use humhub\modules\content\components\ContentContainerController;
 use humhub\modules\mailinglists\components\AdminControllerBase;
-
 
 /**
  *  Mailing-Lists admin controller
  */
-class AdminController extends Controller
+class ContainerController extends ContentContainerController
 {
     public function behaviors()
     {
@@ -58,13 +57,6 @@ class AdminController extends Controller
     {
         return $this->runEditPage();
     }
-
-    /**
-     *  Page editor into a modal window
-     */
-    /*public function actionPageEditModal()
-    {
-    }*/
 
     /**
      *  Send email

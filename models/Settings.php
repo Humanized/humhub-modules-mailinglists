@@ -50,42 +50,6 @@ class Settings extends Model
 
 
     /**
-     *  Mapping of items that can be used in mail elements, such as:
-     *  `{{ member.unsubscribe }}`;
-     */
-    public static function mailMapping() {
-        return [
-            "member.token" => function($p, $m) {
-                if($m instanceof Membership)
-                    return $m->token;
-                return "";
-            },
-            "member.unsubscribe" => function($p, $m) {
-                if($m instanceof Membership)
-                    return Url::toRoute(['member/unsubscribe', 'token' => $m->token],true);
-                return "";
-            },
-            "page.url" => function ($p, $m) {
-                return Url::toRoute(['/custom_pages/view', 'id' => $p->id], true);
-            }
-        ];
-    }
-
-    /**
-     *  Render mail content applying mappings.
-     */
-    public static function renderMail($content, $page, $member) {
-        foreach(Settings::mailMapping() as $key => $map) {
-            $content = preg_replace(
-                '{{{\s*' . str_replace('.','\\.', $key) . '\s*}}}',
-                $map($page, $member),
-                $item
-            );
-        }
-        return $item;
-    }
-
-    /**
      * @inheritdoc
      */
     public function init()

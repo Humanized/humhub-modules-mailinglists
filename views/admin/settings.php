@@ -8,7 +8,7 @@ use humhub\widgets\Button;
 use humhub\modules\custom_pages\controllers\ViewController;
 
 use humhub\modules\mailinglists\widgets\AdminMenu;
-use humhub\modules\mailinglists\models\Settings;
+use humhub\modules\mailinglists\models\MailingListEntry;
 
 /**
  *  @param str message print info message
@@ -41,7 +41,7 @@ use humhub\modules\mailinglists\models\Settings;
 
         <p>Available dynamic content:
         <?php
-            $maps = Settings::mailMapping();
+            $maps = MailingListEntry::valuesMap();
             $maps = array_keys($maps);
             $maps = array_map(function($v) {
                 return '<i>{{ ' . $v . ' }}</i>';

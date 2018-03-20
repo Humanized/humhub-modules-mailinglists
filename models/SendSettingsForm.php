@@ -29,7 +29,7 @@ class SendSettingsForm extends Model
         return [
             ['toNewsletter', 'Send to newsletter'],
             ['toMembers', 'Send to members'],
-            ['includePage', 'Include page content']
+            ['includePage', 'Include page content in the mail instead'],
         ];
     }
 
