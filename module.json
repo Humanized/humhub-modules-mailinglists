@@ -2,7 +2,7 @@
     "id": "mailinglists",
     "name": "Mailing List",
     "description": "Send HTML email to mailing list containing internal or external platform users",
-    "keywords": ["humhub", "space", "post"],
+    "keywords": ["humhub", "mailing-list", "newsletter"],
     "version": "1.0",
     "humhub": {
         "minVersion": "1.2.0"

@@ -23,7 +23,6 @@ class AdminControllerBase extends Behavior
 {
     public $controller;
 
-
     /**
      *  Return controller's space if any or null
      */
@@ -201,8 +200,8 @@ class AdminControllerBase extends Behavior
                 );
         }
 
-        $entry->sendMails($members, $space, $model->includePage);
-        return $this->runEntries('Mails have been successfully sent!');
+        $count = $entry->sendMails($members, $space, $model->includePage);
+        return $this->runEntries($count . ' mails have been successfully sent!');
     }
 
 
