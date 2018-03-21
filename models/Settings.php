@@ -46,7 +46,7 @@ class Settings extends Model
     public function init()
     {
         $settings = $this->getSettings();
-        $gsettings = $this->global();
+        $gsettings = $this->globals();
 
         $this->mailTemplate = $settings->get('mailTemplate',
             $gsettings->mailTemplate ? $gsettings->mailTemplate : 0
@@ -71,7 +71,7 @@ class Settings extends Model
     /**
      *  Return global settings
      */
-    function global()
+    function globals()
     {
         return Yii::$app->getModule('mailinglists')->settings;
     }
