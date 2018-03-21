@@ -210,6 +210,7 @@ class MailingListEntry extends ActiveRecord
                 ->setSubject($page->title)
                 ->setHtmlBody($body)
                 ->setTextBody(strip_tags($body))
+                ->send()
                 ;
         }
 
