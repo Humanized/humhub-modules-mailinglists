@@ -201,7 +201,7 @@ class AdminControllerBase extends Behavior
         }
 
         // FIXME: wrong $model->includePage value (should be boolean, no str)
-        $count = $entry->sendMails($members, $space, $model->includePage == "1");
+        $count = $entry->sendMails($members, $model->includePage == "1");
         return $this->runEntries($count . ' mails have been successfully sent!');
     }
 
