@@ -87,9 +87,9 @@ function mlMailSetPreview(includePage) {
         <?= $entry->renderMail() ?>
         </div>
         <div class="ml_with_page">
-        <?php /* can't edit inline even when assets in custom_pages/modules/templates/assets are all loaded *//* TemplatePage::begin(['page' => $page, 'canEdit' => true, 'editMode' => true]) */ ?>
-        <?= $entry->getPageContent(true) ?>
-        <?php /* TemplatePage::end() */ ?>
+        <?php TemplatePage::begin(['page' => $page, 'canEdit' => false, 'editMode' => false]) ?>
+        <?= $entry->getPageContent(false) ?>
+        <?php TemplatePage::end() ?>
         </div>
     </div>
 

@@ -9,7 +9,6 @@ use yii\db\ActiveRecord;
 use yii\helpers\Url;
 
 use humhub\modules\user\models\User;
-use humhub\widgets\MarkdownView;
 
 use humhub\modules\custom_pages\models\Page;
 use humhub\modules\custom_pages\models\ContainerPage;
@@ -153,8 +152,7 @@ class MailingListEntry extends ActiveRecord
     }
 
     /**
-     *  Render given content as email content: handles values mapped &
-     *  markdown.
+     *  Render given content as email content: handles values mapped
      */
     function mapContent($content, $member) {
         $page = $this->page;
@@ -165,14 +163,14 @@ class MailingListEntry extends ActiveRecord
                 $content
             );
         }
-        return MarkdownView::widget(['markdown' => $content]);
+        return $content;
     }
 
     /**
      *  Render a mail for the given member. When no member is
      *  given, does not map values in "{{ }}".
      */
-    public function renderMail($member = null, $settings = null, $includePage = false)
+    public function renderMail($member = null, $includePage = false)
     {
         $page = $this->page;
         $space = $page instanceof Page ? null : $page->content->container;

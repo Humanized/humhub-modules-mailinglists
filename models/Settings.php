@@ -48,8 +48,9 @@ class Settings extends Model
         $settings = $this->getSettings();
         $gsettings = $this->globals();
 
+        $gmailTemplate = $gsettings->get('mailTemplate');
         $this->mailTemplate = $settings->get('mailTemplate',
-            isset($gsettings->mailTemplate) ? $gsettings->mailTemplate : 0
+            $gmailTemplate ? $gmailTemplate : 0
         );
         // only global
         $this->mailBody = $gsettings->get('mailBody', $this->defaultBody);
@@ -63,7 +64,9 @@ class Settings extends Model
     public function getTemplates()
     {
         return ArrayHelper::map(
-            Template::find()->select(['id','name'])->asArray()->all(),
+            Template::find()->select(['id','name'])
+                ->orderBy('id')
+                ->asArray()->all(),
             'id', 'name'
         );
     }
