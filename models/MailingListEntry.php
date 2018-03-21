@@ -189,7 +189,7 @@ class MailingListEntry extends ActiveRecord
      *  attribute.
      *  @return count of mails sent
      */
-    public function sendMails($members, $includePage = null)
+    public function sendMails($members, $includePage = false)
     {
         if(!count($members))
             return 0;
