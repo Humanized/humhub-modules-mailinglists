@@ -135,31 +135,34 @@ class MailingListEntry extends ActiveRecord
      */
     public static function valuesMap() {
         return [
-            "member.token" => function($p, $m) {
+            "member.token" => function($s, $p, $m) {
                 if($m instanceof Membership)
                     return $m->token;
                 return "";
             },
-            "member.unsubscribe" => function($p, $m) {
+            "member.unsubscribe" => function($s, $p, $m) {
                 if($m instanceof Membership)
                     return Url::toRoute(['member/unsubscribe', 'token' => $m->token],true);
                 return "";
             },
-            "page.url" => function ($p, $m) {
-                return Url::toRoute(['/custom_pages/view', 'id' => $p->id], true);
-            }
+            "page.url" => function ($s, $p, $m) {
+                return $s ?
+                    Url::toRoute(['/custom_pages/view', 'id' => $p->id,
+                                  'sguid' => $s->guid], true) :
+                    Url::toRoute(['/custom_pages/view', 'id' => $p->id], true);
+            },
         ];
     }
 
     /**
      *  Render given content as email content: handles values mapped
      */
-    function mapContent($content, $member) {
+    function mapContent($space, $content, $member) {
         $page = $this->page;
         foreach(MailingListEntry::valuesMap() as $key => $map) {
             $content = preg_replace(
                 '{{{\s*' . str_replace('.','\\.', $key) . '\s*}}}',
-                $map($page, $member),
+                $map($space, $page, $member),
                 $content
             );
         }
@@ -180,7 +183,7 @@ class MailingListEntry extends ActiveRecord
         if($member instanceof MemberShip)
             $body .= '<br>br>' . $settings->mailMention;
         if($member)
-            $body = MailingListEntry::mapContent($body, $member);
+            $body = MailingListEntry::mapContent($space, $body, $member);
         return $body;
     }
 

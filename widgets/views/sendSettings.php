@@ -9,6 +9,15 @@ use humhub\modules\custom_pages\modules\template\widgets\TemplatePage;
 
 $page = $entry->page;
 $title = 'Send a mail: ' . $page->title;
+
+/**
+ *  @param SendSettingsForm $model
+ *  @param MailingListEntry $entry
+ *  @param Space $space
+ *  @param ["id" => "label"] $members
+ *
+ */
+
 ?>
 <style>
 #mlPreviewContainer {
@@ -24,6 +33,11 @@ $title = 'Send a mail: ' . $page->title;
 #mlPreviewContainer[includePage] > .ml_with_page,
 #mlPreviewContainer:not([includePage]) > .ml_without_page {
     display: block;
+}
+
+.mlTargetMembers {
+    max-height: 15em;
+    overflow-y: auto;
 }
 </style>
 <script>
@@ -58,6 +72,14 @@ function mlMailSetPreview(includePage) {
         <?= $form->field($model, 'toMembers')->checkbox() ?>
         <br>
         <?php } ?>
+
+        <?= $form->field($model, 'members')->checkBoxList($members, ['class' => 'mlTargetMembers']) ?>
+        <?php if(!$space) { ?>
+        <small>Note: Selecting members override other selections</small>
+        <br><br>
+        <?php } ?>
+
+        <br>
         <?= $form->field($model, 'includePage')->checkbox([
             'id' => 'includePage',
             'onchange' => 'mlMailSetPreview(this.checked)'

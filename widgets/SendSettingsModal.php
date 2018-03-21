@@ -18,12 +18,14 @@ class SendSettingsModal extends Modal
     public $model;
     public $entry;
     public $space = null;
+    public $members;
 
     public function run() {
         return $this->render('sendSettings', [
             'model' => $this->model,
             'entry' => $this->entry,
             'space' => $this->space,
+            'members' => $this->members,
         ]);
     }
 }

@@ -13,14 +13,17 @@ class SendSettingsForm extends Model
     public $toNewsletter = false;
     public $toMembers = false;
     public $includePage = false;
+    public $members = null;
 
     public function rules()
     {
         return [
-            ['entry', 'integer'],
+            ['entry', 'exist', 'targetClass' => MailingListEntry::className(),
+             'targetAttribute' => 'id'],
             ['toNewsletter', 'boolean'],
             ['toMembers', 'boolean'],
             ['includePage', 'boolean'],
+            ['members', 'each', 'rule' => ['string']]
         ];
     }
 
@@ -30,6 +33,7 @@ class SendSettingsForm extends Model
             ['toNewsletter', 'Send to newsletter'],
             ['toMembers', 'Send to members'],
             ['includePage', 'Include page content in the mail instead'],
+            ['members', 'Select members']
         ];
     }
 

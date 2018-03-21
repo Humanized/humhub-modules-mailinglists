@@ -165,16 +165,48 @@ class AdminControllerBase extends Behavior
     }
 
 
+
+    /**
+     *  Return a list of members that can be mails target
+     */
+    function sendMembers($toMembers, $toNewsletter) {
+        $space = $this->space;
+
+        $members = [];
+        if($space) {
+            $members = $space->getMemberShipUser()->all();
+        }
+        else {
+            if($toMembers)
+                $members = array_merge(
+                    $members, User::find()->all()
+                );
+            if($toNewsletter)
+                $members = array_merge(
+                    $members, MemberShip::find()->all()
+                );
+        }
+        return $members;
+    }
+
     /**
      *  Display send options form (before sending)
      */
     function sendSettings($request, $model) {
         $entry = $this->entry;
+        $members = [];
+        foreach($this->sendMembers(true, true) as $member) {
+            $prefix = $member instanceof Membership ? 'm' : 'u';
+            $members[$prefix . $member->id] = $member instanceof Membership ?
+                $member->email : $member->getDisplayName();
+        }
+
         $model->entry = $entry->id;
         return SendSettingsModal::widget([
             'model' => $model,
             'entry' => $entry,
             'space' => $this->space,
+            'members' => $members,
         ]);
     }
 
@@ -183,26 +215,26 @@ class AdminControllerBase extends Behavior
      */
     function sendMails($request, $model) {
         $entry = $this->entry;
-        $space = $this->getSpace();
-        $members = [];
+        $selectMembers = $model->members;
 
-        if($space) {
-            $members = $space->getMemberShipUser()->all();
-        }
-        else {
-            if($model->toMembers)
-                $members = array_merge(
-                    $members, User::find()->all()
-                );
-            if($model->toNewsletter)
-                $members = array_merge(
-                    $members, MemberShip::find()->all()
-                );
+        $members = $this->sendMembers(
+            $selectMembers || $model->toMembers == '1',
+            $selectMembers || $model->toNewsletter == '1'
+        );
+
+        // filter based on selected members
+        if($selectMembers) {
+            $members = array_filter($members,
+                function($m) use (&$selectMembers) {
+                    $prefix = ($m instanceof Membership) ? 'm' : 'u';
+                    return in_array($prefix . $m->id, $selectMembers);
+                }
+            );
         }
 
         // FIXME: wrong $model->includePage value (should be boolean, no str)
         $count = $entry->sendMails($members, $model->includePage == "1");
-        return $this->runEntries($count . ' mails have been successfully sent!');
+        return $this->runEntries($count . ($count > 1 ? ' mails' : ' mail')  . ' have been successfully sent!');
     }
 
 
@@ -218,8 +250,11 @@ class AdminControllerBase extends Behavior
         $model = new SendSettingsForm();
 
         // send
-        if($model->load(Yii::$app->request->post()) && $model->validate()) {
-            return $this->sendMails($request, $model);
+        if($model->load(Yii::$app->request->post())) {
+            if($model->validate())
+                return $this->sendMails($request, $model);
+            else
+                return $this->runEntries("Invalid configuration given");
         }
 
         // settings
