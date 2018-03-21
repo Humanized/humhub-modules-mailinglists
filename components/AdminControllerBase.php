@@ -167,26 +167,17 @@ class AdminControllerBase extends Behavior
 
 
     /**
-     *  Return a list of members that can be mails target
+     *  Return a list of members that can be mails target.
+     *  @return [members,subscribers]
      */
-    function sendMembers($toMembers, $toNewsletter) {
+    function sendMembers() {
         $space = $this->space;
-
-        $members = [];
         if($space) {
-            $members = $space->getMemberShipUser()->all();
+            return [ $space->getMemberShipUser()->all(),
+                     [] ];
         }
-        else {
-            if($toMembers)
-                $members = array_merge(
-                    $members, User::find()->all()
-                );
-            if($toNewsletter)
-                $members = array_merge(
-                    $members, MemberShip::find()->all()
-                );
-        }
-        return $members;
+        return [ User::find()->all(),
+                 MemberShip::find()->all() ];
     }
 
     /**
@@ -194,12 +185,7 @@ class AdminControllerBase extends Behavior
      */
     function sendSettings($request, $model) {
         $entry = $this->entry;
-        $members = [];
-        foreach($this->sendMembers(true, true) as $member) {
-            $prefix = $member instanceof Membership ? 'm' : 'u';
-            $members[$prefix . $member->id] = $member instanceof Membership ?
-                $member->email : $member->getDisplayName();
-        }
+        [$members,$subscribers] = $this->sendMembers();
 
         $model->entry = $entry->id;
         return SendSettingsModal::widget([
@@ -207,6 +193,7 @@ class AdminControllerBase extends Behavior
             'entry' => $entry,
             'space' => $this->space,
             'members' => $members,
+            'subscribers' => $subscribers,
         ]);
     }
 
@@ -215,22 +202,25 @@ class AdminControllerBase extends Behavior
      */
     function sendMails($request, $model) {
         $entry = $this->entry;
-        $selectMembers = $model->members;
 
-        $members = $this->sendMembers(
-            $selectMembers || $model->toMembers == '1',
-            $selectMembers || $model->toNewsletter == '1'
-        );
+        $ids = [$model->members, $model->subscribers];
+        $targets = $this->sendMembers();
 
-        // filter based on selected members
-        if($selectMembers) {
-            $members = array_filter($members,
-                function($m) use (&$selectMembers) {
-                    $prefix = ($m instanceof Membership) ? 'm' : 'u';
-                    return in_array($prefix . $m->id, $selectMembers);
+        // remember: targets is an array of arrays; we need index
+        foreach(array_values($targets) as $i => $list) {
+            // filter out
+            $selected = $ids[$i];
+            $list = array_filter(
+                $list,
+                function($m) use (&$selected)  {
+                    return in_array($m->id, $selected);
                 }
             );
+            $targets[$i] = $list;
         }
+
+        // we merge here so sendMails handle duplicates
+        $members = $targets[0] + $targets[1];
 
         // FIXME: wrong $model->includePage value (should be boolean, no str)
         $count = $entry->sendMails($members, $model->includePage == "1");
