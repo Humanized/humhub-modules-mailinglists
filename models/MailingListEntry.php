@@ -46,6 +46,7 @@ class MailingListEntry extends ActiveRecord
         $page->icon = 'fa-envelope';
         $page->type = \humhub\modules\custom_pages\components\Container::TYPE_TEMPLATE;
         $page->templateId = $templateId;
+        $page->admin_only = 1;
         $page->save();
         if(!$page->id)
             return null;
@@ -216,6 +217,8 @@ class MailingListEntry extends ActiveRecord
                 ->send()
                 ;
         }
+
+        $page->admin_only = 0;
 
         $this->sent_at = (new DateTime())->format("Y-m-d H:i:s");
         $this->save();

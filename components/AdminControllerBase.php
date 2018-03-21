@@ -210,6 +210,11 @@ class AdminControllerBase extends Behavior
         foreach(array_values($targets) as $i => $list) {
             // filter out
             $selected = $ids[$i];
+            if(!$selected) {
+                $targets[$i] = [];
+                continue;
+            }
+
             $list = array_filter(
                 $list,
                 function($m) use (&$selected)  {
@@ -224,7 +229,7 @@ class AdminControllerBase extends Behavior
 
         // FIXME: wrong $model->includePage value (should be boolean, no str)
         $count = $entry->sendMails($members, $model->includePage == "1");
-        return $this->runEntries($count . ($count > 1 ? ' mails' : ' mail')  . ' have been successfully sent!');
+        return $this->runEntries($count . ($count > 1 ? ' mails' : ' mail')  . ' have been sent.');
     }
 
 
