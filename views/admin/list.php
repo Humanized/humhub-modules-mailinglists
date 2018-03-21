@@ -76,21 +76,6 @@ use humhub\modules\mailinglists\widgets\AdminMenu;
                 </td>
                 <td>
                     <div class="pull-right">
-                        <button class="btn btn-xs btn-primary"
-                            data-action-click="ui.modal.load"
-                            data-action-url="<?= Url::toRoute(
-                                $space ?
-                                    ['container/send', 'id' => $entry->id,
-                                        'sguid' => $space->guid] :
-                                    ['admin/send', 'id' => $entry->id],
-                                true
-                            )
-                            ?>"
-                            title="Send mails"
-                        >
-                            <li class="fa fa-envelope"></li>
-                            Send
-                        </button>
                         <?= Html::a(
                             '<li class="fa fa-pencil"></li>',
                             Url::toRoute(
