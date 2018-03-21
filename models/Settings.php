@@ -52,8 +52,8 @@ class Settings extends Model
             isset($gsettings->mailTemplate) ? $gsettings->mailTemplate : 0
         );
         // only global
-        $this->mailBody = $gsettings()->get('mailBody', $this->defaultBody);
-        $this->mailMention = $gsettings()->get('mailMention', $this->defaultMention);
+        $this->mailBody = $gsettings->get('mailBody', $this->defaultBody);
+        $this->mailMention = $gsettings->get('mailMention', $this->defaultMention);
     }
 
 
