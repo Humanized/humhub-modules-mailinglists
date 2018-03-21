@@ -124,7 +124,7 @@ class MailingListEntry extends ActiveRecord
             return $this->instance->render(true);
 
         if($this->_pageContent)
-            return $this>_pageContent;
+            return $this->_pageContent;
         $this->_pageContent = $this->instance->render(false);
         return $this->_pageContent;
     }
