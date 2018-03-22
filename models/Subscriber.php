@@ -11,12 +11,12 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property string $email
  */
-class Membership extends ActiveRecord
+class Subscriber extends ActiveRecord
 {
 
     public static function tableName()
     {
-        return 'mailing_list_membership';
+        return 'mailing_list_subscriber';
     }
 
     public function rules()

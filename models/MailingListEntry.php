@@ -137,12 +137,12 @@ class MailingListEntry extends ActiveRecord
     public static function valuesMap() {
         return [
             "member.token" => function($s, $p, $m) {
-                if($m instanceof Membership)
+                if($m instanceof Subscriber)
                     return $m->token;
                 return "";
             },
             "member.unsubscribe" => function($s, $p, $m) {
-                if($m instanceof Membership)
+                if($m instanceof Subscriber)
                     return Url::toRoute(['member/unsubscribe', 'token' => $m->token],true);
                 return "";
             },
@@ -181,7 +181,7 @@ class MailingListEntry extends ActiveRecord
         $settings = new Settings(['space' => $space]);
 
         $body = $includePage ? $this->pageContent : $settings->mailBody;
-        if($member instanceof MemberShip)
+        if($member instanceof Subscriber)
             $body .= '<br>br>' . $settings->mailMention;
         if($member)
             $body = MailingListEntry::mapContent($space, $body, $member);

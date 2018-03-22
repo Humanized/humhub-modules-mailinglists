@@ -3,7 +3,7 @@
 namespace humhub\modules\mailinglists\controllers;
 
 use humhub\modules\mailinglists\models\SubscribeForm;
-use humhub\modules\mailinglists\models\Membership;
+use humhub\modules\mailinglists\models\Subscriber;
 use Yii;
 
 /**
@@ -28,7 +28,7 @@ class MemberController extends \humhub\modules\content\controllers\ContentContro
 
     function actionUnsubscribe($token)
     {
-        $model = Membership::findOne(['token' => $token]);
+        $model = Subscriber::findOne(['token' => $token]);
         if (isset($model) && $model->delete()) {
             $this->view->success('Newsletter unsubscription successful!');
         }

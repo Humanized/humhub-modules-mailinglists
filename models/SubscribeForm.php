@@ -5,7 +5,7 @@ namespace humhub\modules\mailinglists\models;
 use Yii;
 use yii\base\Model;
 use humhub\modules\mailinglists\components\SubscriptionValidator;
-use humhub\modules\mailinglists\models\Membership;
+use humhub\modules\mailinglists\models\Subscriber;
 use humhub\modules\user\models\User;
 
 /**
@@ -43,7 +43,7 @@ class SubscribeForm extends Model
 
     public function save()
     {
-        $model = new Membership(['email' => $this->email]);
+        $model = new Subscriber(['email' => $this->email]);
         $model->is_member = (NULL !== User::findOne(['email' => $this->email]));
         return $model->save();
     }

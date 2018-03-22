@@ -9,7 +9,7 @@ namespace humhub\modules\mailinglists\components;
  */
 
 use yii\validators\Validator;
-use humhub\modules\mailinglists\models\Membership;
+use humhub\modules\mailinglists\models\Subscriber;
 
 /**
  * Description of SubscriptionValidator
@@ -21,7 +21,7 @@ class SubscriptionValidator extends Validator
 
     public function validateAttribute($model, $attribute)
     {
-        $m = Membership::findOne(['email' => $model->$attribute]);
+        $m = Subscriber::findOne(['email' => $model->$attribute]);
         if (isset($m)) {
             $this->addError($model, $attribute, 'Email address already subscribed to mailinglists');
         }

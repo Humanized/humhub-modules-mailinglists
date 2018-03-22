@@ -12,7 +12,7 @@ use humhub\modules\custom_pages\models\ContainerPage;
 
 use humhub\modules\mailinglists\models\EditPageForm;
 use humhub\modules\mailinglists\models\MailingListEntry;
-use humhub\modules\mailinglists\models\Membership;
+use humhub\modules\mailinglists\models\Subscriber;
 use humhub\modules\mailinglists\models\SendSettingsForm;
 use humhub\modules\mailinglists\models\Settings;
 use humhub\modules\mailinglists\widgets\EditPageModal;
@@ -165,19 +165,26 @@ class AdminControllerBase extends Behavior
     }
 
 
-
     /**
      *  Return a list of members that can be mails target.
-     *  @return [members,subscribers]
+     *  @return [User]
      */
     function sendMembers() {
         $space = $this->space;
-        if($space) {
-            return [ $space->getMemberShipUser()->all(),
-                     [] ];
-        }
-        return [ User::find()->all(),
-                 MemberShip::find()->all() ];
+        if($space)
+            return $space->getSubscriberUser()->all();
+        return User::find()->all();
+    }
+
+    /**
+     *  Return a list of subscribers that can be mails target.
+     *  @return [Subscriber]
+     */
+    function sendSubscribers() {
+        $space = $this->space;
+        if($space)
+            return [];
+        return Subscriber::find()->all();
     }
 
     /**
@@ -185,7 +192,8 @@ class AdminControllerBase extends Behavior
      */
     function sendSettings($request, $model) {
         $entry = $this->entry;
-        [$members,$subscribers] = $this->sendMembers();
+        $members = $this->sendMembers();
+        $subscribers = $this->sendSubscribers();
 
         $model->entry = $entry->id;
         return SendSettingsModal::widget([
@@ -197,38 +205,34 @@ class AdminControllerBase extends Behavior
         ]);
     }
 
+
+    /**
+     *  Filter in people that have given $ids on $list
+     */
+    function sendFilterPeople($ids, $list)
+    {
+        return array_filter(
+            $list,
+            function($m) use (&$ids)  {
+                return in_array($m->id, $ids);
+            }
+        );
+    }
+
     /**
      *  Actually send mails for the given entry
      */
     function sendMails($request, $model) {
         $entry = $this->entry;
 
-        $ids = [$model->members, $model->subscribers];
-        $targets = $this->sendMembers();
-
-        // remember: targets is an array of arrays; we need index
-        foreach(array_values($targets) as $i => $list) {
-            // filter out
-            $selected = $ids[$i];
-            if(!$selected) {
-                $targets[$i] = [];
-                continue;
-            }
-
-            $list = array_filter(
-                $list,
-                function($m) use (&$selected)  {
-                    return in_array($m->id, $selected);
-                }
-            );
-            $targets[$i] = $list;
-        }
+        $members = $this->sendFilterPeople($model->members, $this->sendMembers());
+        $subscribers = $this->sendFilterPeople($model->subscribers, $this->sendSubscribers());
 
         // we merge here so sendMails handle duplicates
-        $members = $targets[0] + $targets[1];
+        $people = $members + $subscribers;
 
         // FIXME: wrong $model->includePage value (should be boolean, no str)
-        $count = $entry->sendMails($members, $model->includePage == "1");
+        $count = $entry->sendMails($people, $model->includePage == "1");
         return $this->runEntries($count . ($count > 1 ? ' mails' : ' mail')  . ' have been sent.');
     }
 

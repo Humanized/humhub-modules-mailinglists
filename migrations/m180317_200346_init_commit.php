@@ -9,7 +9,7 @@ class m180317_200346_init_commit extends Migration
 
     public function safeUp()
     {
-        $this->createTable('mailing_list_membership', [
+        $this->createTable('mailing_list_subscriber', [
             'id' => $this->primaryKey(),
             'email' => $this->string(128)->notNull()->unique(),
             'is_member' => $this->boolean(),
