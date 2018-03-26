@@ -225,8 +225,12 @@ class AdminControllerBase extends Behavior
     function sendMails($request, $model) {
         $entry = $this->entry;
 
-        $members = $this->sendFilterPeople($model->members, $this->sendMembers());
-        $subscribers = $this->sendFilterPeople($model->subscribers, $this->sendSubscribers());
+        $members = $model->members ?
+            $this->sendFilterPeople($model->members, $this->sendMembers()) :
+            [];
+        $subscribers = $model->subscribers ?
+            $this->sendFilterPeople($model->subscribers, $this->sendSubscribers()) :
+            [];
 
         // we merge here so sendMails handle duplicates
         $people = $members + $subscribers;

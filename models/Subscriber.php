@@ -28,4 +28,9 @@ class Subscriber extends ActiveRecord
         ];
     }
 
+    public function getDisplayName()
+    {
+        return $this->email;
+    }
+
 }
