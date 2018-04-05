@@ -172,7 +172,7 @@ class AdminControllerBase extends Behavior
     function sendMembers() {
         $space = $this->space;
         if($space)
-            return $space->getSubscriberUser()->all();
+            return $space->getMembershipUser()->all();
         return User::find()->all();
     }
 
