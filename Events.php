@@ -15,7 +15,7 @@ use humhub\modules\mailinglists\models\Settings;
 /**
  *  MentionSpacesEvents
  */
-class Events extends \yii\base\Object
+class Events extends \yii\base\BaseObject
 {
     public static function onAdminMenuInit($event)
     {
